@@ -1,8 +1,8 @@
 {
-  "name": "NewCP",
-  "productName": "NewCP",
-  "version": "1.6.3",
-  "description": "NewCP App",
+  "name": "PandandaRewritten",
+  "productName": "Pandanda Rewritten",
+  "version": "2.0.0",
+  "description": "PDR-ClientV2 is a custom client for a Pandanda private server.",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -15,7 +15,7 @@
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
-  "author": "NewCP",
+  "author": "Pandanda Rewritten",
   "license": "MIT",
   "config": {
     "forge": {
@@ -27,7 +27,7 @@
           "config": {
             "name": "newcp",
             "authors": "NewCP",
-            "loadingGif": "./src/assets/default-splash.gif",
+            "loadingGif": "./src/assets/pdr.png",
             "setupIcon": "./lib/icons/icon.ico"
           }
         }, {
@@ -75,8 +75,8 @@
           "name": "@electron-forge/publisher-github",
           "config": {
             "repository": {
-              "owner": "New-Club-Penguin",
-              "name": "NewCP-App-Build"
+              "owner": "Pandanda-Rewritten",
+              "name": "PDR-ClientV2"
             },
             "prerelease": true
           }
@@ -93,12 +93,12 @@
         ]
       }
     ],
-    "appId": "com.newcp.ncp-app",
-    "productName": "NewCP",
-    "copyright": "Copyright © 2020 ${author}",
+    "appId": "com.pdr.pdrcv2",
+    "productName": "Pandanda Rewritten",
+    "copyright": "Copyright © 2026 ${author}",
     "mac": {
       "icon": "./lib/icons/icon.icns",
-      "category": "lib.games.newcp"
+      "category": "lib.games.pdr"
     },
     "win": {
       "icon": "./lib/icons/icon.png"
@@ -107,9 +107,9 @@
       "buildResources": "lib"
     },
     "protocols": [{
-        "name": "newcp",
+        "name": "pdr",
         "schemes": [
-          "newcp"
+          "pdr"
         ]
       }
     ]
