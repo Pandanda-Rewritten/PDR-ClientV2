@@ -25,8 +25,8 @@
       "makers": [{
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "newcp",
-            "authors": "NewCP",
+            "name": "PandandaRewritten",
+            "authors": "PDR Team",
             "loadingGif": "./src/assets/pdr.png",
             "setupIcon": "./lib/icons/icon.ico"
           }
@@ -49,8 +49,8 @@
         }, {
           "name": "@electron-forge/maker-flatpak",
           "config": {
-            "genericName": "NewCP",
-            "productName": "NewCP",
+            "genericName": "Pandanda Rewritten",
+            "productName": "Pandanda Rewritten",
             "categories": [
               "Game"
             ],
