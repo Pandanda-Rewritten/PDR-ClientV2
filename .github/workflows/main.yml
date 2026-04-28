@@ -48,12 +48,17 @@ jobs:
       # Linux makers rely on optional deps (electron-installer-*), so install them here
       - name: Install dependencies (Ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
-        run: yarn
+        run: yarn --ignore-optional
+
+      - name: Install Linux maker node deps (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: yarn global add electron-installer-debian electron-installer-redhat @malept/electron-installer-flatpak
         
       - name: Install flatpak
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get update
+          sudo apt-get install fakeroot rpm -y
           sudo apt-get install flatpak -y
           sudo apt-get install flatpak-builder -y
           sudo apt-get install elfutils -y
@@ -66,6 +71,7 @@ jobs:
         run: yarn run publish
         env:
           GITHUB_TOKEN: ${{ secrets.BUILD_TOKEN }}
+          NODE_PATH: ${{ env.HOME }}/.config/yarn/global/node_modules
 
       - name: Make and Publish (WINDOWS)
         if: startsWith(matrix.os, 'windows')
