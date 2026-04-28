@@ -79,6 +79,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BUILD_TOKEN }}
         
+      - name: Delete existing release assets (MAC)
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BUILD_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="v$(node -p "require('./package.json').version")"
+          # Ignore if the release doesn't exist yet
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # Delete only darwin artifacts from prior runs to avoid "already_exists"
+            gh release view "$TAG" --json assets -q '.assets[].name' | while read -r name; do
+              if [[ "$name" == *"darwin"* || "$name" == *"mac"* || "$name" == *.dmg || "$name" == *.zip ]]; then
+                gh release delete-asset "$TAG" "$name" -y || true
+              fi
+            done
+          fi
+
       - name: Make and Publish (MAC)
         if: startsWith(matrix.os, 'macos')
         run: yarn run publish-mac
