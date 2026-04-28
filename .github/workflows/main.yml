@@ -43,6 +43,8 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies (skip optional native deps)
         run: yarn --frozen-lockfile --ignore-optional
+      - name: Install DMG toolchain (macOS)
+        run: npm i --no-save appdmg
       - name: Build (make)
         run: yarn make
       - name: Upload artifacts

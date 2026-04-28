@@ -19,6 +19,11 @@ if (process.platform === "win32") {
 
 if (process.platform === "darwin") {
   makers.push({ name: "@electron-forge/maker-zip", platforms: ["darwin"] });
+  makers.push({
+    name: "@electron-forge/maker-dmg",
+    platforms: ["darwin"],
+    config: { format: "ULFO" },
+  });
 }
 
 if (process.platform === "linux") {
