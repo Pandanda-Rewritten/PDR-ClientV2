@@ -1,104 +1,90 @@
 name: Build PDR-ClientV2
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push for production branch
   push:
     branches: 
        - production
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    name: Build PDR-ClientV2
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+  windows:
+    name: Windows build
+    runs-on: windows-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
-      
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v6
+          node-version: 16
+          cache: yarn
+      - uses: actions/setup-python@v6
         with:
-          python-version: '3.10' 
-        
-      - name: Setup MSBuild
-        if: startsWith(matrix.os, 'windows')
-        uses: microsoft/setup-msbuild@v1.1
-        
-      - name: Install dependencies (Windows)
-        if: startsWith(matrix.os, 'windows')
-        run: yarn
+          python-version: '3.10'
+      - uses: microsoft/setup-msbuild@v2
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Build (make)
+        run: yarn make
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-make
+          path: out/make/**
 
-      # macOS doesn't need optional deps that can fail to build (e.g. `register-scheme`)
-      - name: Install dependencies (macOS)
-        if: startsWith(matrix.os, 'macos')
-        run: yarn --ignore-optional
+  mac:
+    name: macOS build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: yarn
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+      - name: Install dependencies (skip optional native deps)
+        run: yarn --frozen-lockfile --ignore-optional
+      - name: Build (make)
+        run: yarn make
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-make
+          path: out/make/**
 
-      # Linux makers rely on optional deps (electron-installer-*), so install them here
-      - name: Install dependencies (Ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: yarn --ignore-optional
+  linux:
+    name: Linux build
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: ${{ env.HOME }}/.config/yarn/global/node_modules
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: yarn
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
 
-      - name: Install Linux maker node deps (Ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: yarn global add electron-installer-debian electron-installer-redhat @malept/electron-installer-flatpak
-        
-      - name: Install flatpak
-        if: startsWith(matrix.os, 'ubuntu')
+      - name: Install system deps for makers
         run: |
           sudo apt-get update
-          sudo apt-get install fakeroot rpm -y
-          sudo apt-get install flatpak -y
-          sudo apt-get install flatpak-builder -y
-          sudo apt-get install elfutils -y
+          sudo apt-get install -y fakeroot rpm flatpak flatpak-builder elfutils
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install flathub org.freedesktop.Platform/x86_64/22.08 org.freedesktop.Sdk/x86_64/22.08 org.electronjs.Electron2.BaseApp/x86_64/22.08 -y
+          sudo flatpak install -y flathub org.freedesktop.Platform/x86_64/22.08 org.freedesktop.Sdk/x86_64/22.08 org.electronjs.Electron2.BaseApp/x86_64/22.08
           git config --global --add protocol.file.allow always
 
-      - name: Make and Publish (Ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: yarn run publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_TOKEN }}
-          NODE_PATH: ${{ env.HOME }}/.config/yarn/global/node_modules
+      - name: Install dependencies (skip optional native deps)
+        run: yarn --frozen-lockfile --ignore-optional
 
-      - name: Make and Publish (WINDOWS)
-        if: startsWith(matrix.os, 'windows')
-        run: yarn run publish-windows
-        env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_TOKEN }}
-        
-      - name: Delete existing release assets (MAC)
-        if: startsWith(matrix.os, 'macos')
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.BUILD_TOKEN }}
-        run: |
-          set -euo pipefail
-          TAG="v$(node -p "require('./package.json').version")"
-          # Ignore if the release doesn't exist yet
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            # Delete only darwin artifacts from prior runs to avoid "already_exists"
-            gh release view "$TAG" --json assets -q '.assets[].name' | while read -r name; do
-              if [[ "$name" == *"darwin"* || "$name" == *"mac"* || "$name" == *.dmg || "$name" == *.zip ]]; then
-                gh release delete-asset "$TAG" "$name" -y || true
-              fi
-            done
-          fi
+      - name: Install Linux maker node deps (global)
+        run: yarn global add electron-installer-debian electron-installer-redhat @malept/electron-installer-flatpak
 
-      - name: Make and Publish (MAC)
-        if: startsWith(matrix.os, 'macos')
-        run: yarn run publish-mac
-        env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_TOKEN }}
+      - name: Build (make)
+        run: yarn make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-make
+          path: out/make/**
