@@ -54,8 +54,6 @@ jobs:
   linux:
     name: Linux build
     runs-on: ubuntu-latest
-    env:
-      NODE_PATH: ${{ env.HOME }}/.config/yarn/global/node_modules
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -78,7 +76,9 @@ jobs:
         run: yarn --frozen-lockfile --ignore-optional
 
       - name: Install Linux maker node deps (global)
-        run: yarn global add electron-installer-debian electron-installer-redhat @malept/electron-installer-flatpak
+        run: |
+          yarn global add electron-installer-debian electron-installer-redhat @malept/electron-installer-flatpak
+          echo "NODE_PATH=$(yarn global dir)/node_modules" >> "$GITHUB_ENV"
 
       - name: Build (make)
         run: yarn make
