@@ -9,9 +9,8 @@ if (require("electron-squirrel-startup")) app.quit();
 if (process.platform != "darwin") require("update-electron-app")({ repo: "New-Club-Penguin/NewCP-App-Build" });
 
 const ALLOWED_ORIGINS = [
-  "https://newcp.net",
-  "https://play.newcp.net",
-  "https://appeal.newcp.net",
+  "https://pandandarewritten.com",
+  "https://play.pandandarewritten.com"
 ];
 
 const pluginPaths = {
@@ -49,10 +48,13 @@ const createWindow = () => {
   });
 
   mainWindow = new BrowserWindow({
+    width: 1074,
+    height: 832,
     autoHideMenuBar: true,
     useContentSize: true,
     show: false,
     webPreferences: {
+			devTools: false,
       plugins: true,
     },
   });
@@ -81,7 +83,7 @@ const createWindow = () => {
   mainWindow.on("closed", () => (mainWindow = null));
 
   mainWindow.webContents.session.clearHostResolverCache();
-  withTimeout(mainWindow.loadURL("https://newcp.net/"), 60000).catch(async () => {
+  withTimeout(mainWindow.loadURL("https://play.pandandarewritten.com"), 60000).catch(async () => {
       await discord_integration.cleanupDiscord();
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.close();
@@ -103,7 +105,7 @@ const launchMain = () => {
       mainWindow.focus();
     }
   });
-  app.setAsDefaultProtocolClient("newcp");
+  app.setAsDefaultProtocolClient("pdr");
 
   app.whenReady().then(() => {
     createWindow();
