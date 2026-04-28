@@ -47,6 +47,9 @@ if (process.platform === "linux") {
 module.exports = {
   packagerConfig: {
     icon: "lib/icons/icon.icns",
+    // Linux makers (deb/rpm/flatpak) expect the packaged executable to match the app's name.
+    // Ensure Electron Packager produces a binary without spaces.
+    executableName: "PandandaRewritten",
   },
   makers,
   publishers: [
