@@ -40,12 +40,15 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: yarn
 
-      # `discord-rpc` brings `register-scheme` as an optionalDependency.
-      # It is not required for macOS/Linux builds, and it can fail to compile
-      # under the older Electron toolchain used by this repo.
-      - name: Install dependencies (macOS/Linux)
-        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
+      # macOS doesn't need optional deps that can fail to build (e.g. `register-scheme`)
+      - name: Install dependencies (macOS)
+        if: startsWith(matrix.os, 'macos')
         run: yarn --ignore-optional
+
+      # Linux makers rely on optional deps (electron-installer-*), so install them here
+      - name: Install dependencies (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: yarn
         
       - name: Install flatpak
         if: startsWith(matrix.os, 'ubuntu')
