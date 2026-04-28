@@ -62,7 +62,7 @@
     "update-electron-app": "2.0.1"
   },
   "optionalDependencies": {
-    "@malept/electron-installer-flatpak": "^2.0.0",
+    "@malept/electron-installer-flatpak": "^0.11.4",
     "electron-installer-debian": "^3.0.0",
     "electron-installer-redhat": "^3.4.0"
   },

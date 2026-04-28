@@ -1347,7 +1347,7 @@ electron-installer-common@^0.10.0, electron-installer-common@^0.10.2:
   optionalDependencies:
     "@types/fs-extra" "^9.0.1"
 
-electron-installer-debian@^3.2.0:
+electron-installer-debian@^3.0.0, electron-installer-debian@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/electron-installer-debian/-/electron-installer-debian-3.2.0.tgz#2a9c8220f50a57807de8f93619a0d61ec41271e0"
   integrity sha512-58ZrlJ1HQY80VucsEIG9tQ//HrTlG6sfofA3nRGr6TmkX661uJyu4cMPPh6kXW+aHdq/7+q25KyQhDrXvRL7jw==
@@ -1382,7 +1382,7 @@ electron-installer-dmg@^4.0.0:
   optionalDependencies:
     appdmg "^0.6.4"
 
-electron-installer-redhat@^3.2.0:
+electron-installer-redhat@^3.2.0, electron-installer-redhat@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/electron-installer-redhat/-/electron-installer-redhat-3.4.0.tgz#4a7f8d67b48b7d5b23bd1eb074f4b684ae43b192"
   integrity sha512-gEISr3U32Sgtj+fjxUAlSDo3wyGGq6OBx7rF5UdpIgbnpUvMN4W5uYb0ThpnAZ42VEJh/3aODQXHbFS4f5J3Iw==
