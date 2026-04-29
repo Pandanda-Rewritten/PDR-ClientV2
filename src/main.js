@@ -1,4 +1,4 @@
-const { app, BrowserWindow, autoUpdater } = require("electron");
+const { app, BrowserWindow, shell, autoUpdater } = require("electron");
 const discord_integration = require('./integrations/discord');
 const path = require("path");
 
@@ -54,7 +54,7 @@ const createWindow = () => {
     useContentSize: true,
     show: false,
     webPreferences: {
-			devTools: false,
+			devTools: true,
       plugins: true,
     },
   });
@@ -70,7 +70,15 @@ const createWindow = () => {
   mainWindow.webContents.on("will-navigate", (event, urlString) => {
     if (!ALLOWED_ORIGINS.includes(new URL(urlString).origin)) {
       event.preventDefault();
+      shell.openExternal(urlString);
     }
+  });
+
+  // Electron 11: block all popup windows and open externally instead.
+  // Covers `window.open()` and links with target="_blank".
+  mainWindow.webContents.on("new-window", (event, url) => {
+    event.preventDefault();
+    if (url) shell.openExternal(url);
   });
 
   app.on('before-quit', async () => {
